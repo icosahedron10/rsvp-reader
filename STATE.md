@@ -40,6 +40,18 @@ All three parts are **fully implemented**:
      - Remove and Clear buttons
      - Autoplay toggle for automatic progression
      - Double-click or Play Selected to start
+   - **Keyboard shortcuts**:
+     - Space: play/pause (except in search field)
+     - Left/Right arrows: navigate previous/next word
+     - R: reset to beginning
+     - Ctrl+O: open file
+     - Escape: stop playback
+   - **Tooltips**: All buttons and controls have hover tooltips with shortcuts
+   - **Status bar**: Shows playback state (Playing.../Paused at word X/Ready)
+   - **Theme settings**:
+     - Dark mode toggle (bg #121212, text #EAEAEA)
+     - User-selectable accent color (default #4C9FFE)
+     - Word display changes color when playing vs paused
 
 ### Build/Test Status
 - **Dependencies installed**: PyPDF2 3.0.1, pytest 9.0.2, tkinter-tooltip 3.1.2
@@ -68,6 +80,8 @@ All three parts are **fully implemented**:
 ### Known Issues
 
 ## Recent changes
+- 2026-02-01: Added dark mode with accent color picker and status bar (Goals 3 & 4 complete)
+- 2026-02-01: Added keyboard shortcuts and tooltips (Goals 1 & 2 complete)
 - 2026-02-01: Added queue panel to UI with Add Files, Add Chapters, reordering, remove, autoplay
 - 2026-02-01: Updated file dialogs to support .epub/.pub files
 - 2026-02-01: Added EPUB/PUB file parsing support to FileParser

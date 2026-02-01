@@ -5,10 +5,45 @@ and file queue management.
 """
 
 import tkinter as tk
-from tkinter import ttk, filedialog, messagebox
-from typing import Optional, List, Tuple
+from tkinter import ttk, filedialog, messagebox, colorchooser
+from typing import Optional, List, Tuple, Dict, Any
 from file_parser import FileParser
 from token_displayer import RSVPTokenDisplayer
+from tktooltip import ToolTip
+
+
+# Theme color definitions
+LIGHT_THEME: Dict[str, str] = {
+    "bg": "#f0f0f0",
+    "fg": "#2c3e50",
+    "display_bg": "#ecf0f1",
+    "display_fg": "#2c3e50",
+    "listbox_bg": "#ffffff",
+    "listbox_fg": "#2c3e50",
+    "listbox_select_bg": "#3498db",
+    "listbox_select_fg": "#ffffff",
+    "frame_bg": "#f0f0f0",
+    "button_bg": "#e0e0e0",
+    "entry_bg": "#ffffff",
+    "entry_fg": "#2c3e50",
+}
+
+DARK_THEME: Dict[str, str] = {
+    "bg": "#121212",
+    "fg": "#EAEAEA",
+    "display_bg": "#1e1e1e",
+    "display_fg": "#EAEAEA",
+    "listbox_bg": "#1e1e1e",
+    "listbox_fg": "#EAEAEA",
+    "listbox_select_bg": "#4C9FFE",
+    "listbox_select_fg": "#ffffff",
+    "frame_bg": "#121212",
+    "button_bg": "#2d2d2d",
+    "entry_bg": "#2d2d2d",
+    "entry_fg": "#EAEAEA",
+}
+
+DEFAULT_ACCENT_COLOR = "#4C9FFE"
 
 
 class RSVPReaderUI:
@@ -36,7 +71,17 @@ class RSVPReaderUI:
         self.current_queue_index = -1
         self.autoplay_enabled = tk.BooleanVar(value=True)
 
+        # Theme state
+        self.dark_mode_enabled = tk.BooleanVar(value=False)
+        self.accent_color = DEFAULT_ACCENT_COLOR
+        self.current_theme = LIGHT_THEME
+
+        # Status bar variable
+        self.status_var = tk.StringVar(value="Ready")
+
         self._setup_ui()
+        self._setup_keyboard_bindings()
+        self._apply_theme()
         
     def _setup_ui(self) -> None:
         """
@@ -63,9 +108,9 @@ class RSVPReaderUI:
         file_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
         file_frame.columnconfigure(0, weight=1)
 
-        ttk.Button(file_frame, text="Open File", command=self._open_file).grid(
-            row=0, column=0, sticky=tk.W
-        )
+        self.open_button = ttk.Button(file_frame, text="Open File", command=self._open_file)
+        self.open_button.grid(row=0, column=0, sticky=tk.W)
+        ToolTip(self.open_button, msg="Open a file (Ctrl+O)", delay=0.5)
 
         self.file_label = ttk.Label(file_frame, text="No file loaded")
         self.file_label.grid(row=0, column=1, sticky=tk.W, padx=(10, 0))
@@ -114,18 +159,19 @@ class RSVPReaderUI:
             control_frame, text="▶ Play", command=self._toggle_play
         )
         self.play_button.grid(row=0, column=0, padx=5)
+        ToolTip(self.play_button, msg="Play/Pause (Space)", delay=0.5)
 
-        ttk.Button(control_frame, text="⏮ Previous", command=self._previous_word).grid(
-            row=0, column=1, padx=5
-        )
+        self.prev_button = ttk.Button(control_frame, text="⏮ Previous", command=self._previous_word)
+        self.prev_button.grid(row=0, column=1, padx=5)
+        ToolTip(self.prev_button, msg="Previous word (Left Arrow)", delay=0.5)
 
-        ttk.Button(control_frame, text="⏭ Next", command=self._next_word).grid(
-            row=0, column=2, padx=5
-        )
+        self.next_button = ttk.Button(control_frame, text="⏭ Next", command=self._next_word)
+        self.next_button.grid(row=0, column=2, padx=5)
+        ToolTip(self.next_button, msg="Next word (Right Arrow)", delay=0.5)
 
-        ttk.Button(control_frame, text="⏹ Reset", command=self._reset).grid(
-            row=0, column=3, padx=5
-        )
+        self.reset_button = ttk.Button(control_frame, text="⏹ Reset", command=self._reset)
+        self.reset_button.grid(row=0, column=3, padx=5)
+        ToolTip(self.reset_button, msg="Reset to beginning (R)", delay=0.5)
 
         # Speed control section
         speed_frame = ttk.LabelFrame(reader_frame, text="Speed Control", padding="10")
@@ -135,7 +181,7 @@ class RSVPReaderUI:
         ttk.Label(speed_frame, text="WPM:").grid(row=0, column=0, sticky=tk.W)
 
         self.speed_var = tk.IntVar(value=300)
-        speed_slider = ttk.Scale(
+        self.speed_slider = ttk.Scale(
             speed_frame,
             from_=100,
             to=1000,
@@ -143,7 +189,8 @@ class RSVPReaderUI:
             variable=self.speed_var,
             command=self._update_speed
         )
-        speed_slider.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
+        self.speed_slider.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
+        ToolTip(self.speed_slider, msg="Reading speed (100-1000 words per minute)", delay=0.5)
 
         self.speed_label = ttk.Label(speed_frame, text="300 WPM")
         self.speed_label.grid(row=0, column=2, sticky=tk.E)
@@ -156,20 +203,52 @@ class RSVPReaderUI:
         ttk.Label(search_frame, text="Find:").grid(row=0, column=0, sticky=tk.W)
 
         self.search_var = tk.StringVar()
-        search_entry = ttk.Entry(search_frame, textvariable=self.search_var)
-        search_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
-        search_entry.bind('<Return>', lambda e: self._search())
+        self.search_entry = ttk.Entry(search_frame, textvariable=self.search_var)
+        self.search_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
+        self.search_entry.bind('<Return>', lambda e: self._search())
+        ToolTip(self.search_entry, msg="Type text to find in document (Enter to search)", delay=0.5)
 
-        ttk.Button(search_frame, text="Search", command=self._search).grid(
-            row=0, column=2, padx=(0, 5)
-        )
+        self.search_button = ttk.Button(search_frame, text="Search", command=self._search)
+        self.search_button.grid(row=0, column=2, padx=(0, 5))
+        ToolTip(self.search_button, msg="Find text in document", delay=0.5)
 
-        ttk.Button(search_frame, text="Find Next", command=self._search_next).grid(
-            row=0, column=3
+        self.find_next_button = ttk.Button(search_frame, text="Find Next", command=self._search_next)
+        self.find_next_button.grid(row=0, column=3)
+        ToolTip(self.find_next_button, msg="Find next occurrence", delay=0.5)
+
+        # Theme settings section
+        theme_frame = ttk.LabelFrame(reader_frame, text="Theme Settings", padding="10")
+        theme_frame.grid(row=6, column=0, sticky=(tk.W, tk.E), pady=(10, 0))
+
+        self.dark_mode_checkbox = ttk.Checkbutton(
+            theme_frame,
+            text="Dark Mode",
+            variable=self.dark_mode_enabled,
+            command=self._toggle_dark_mode
         )
+        self.dark_mode_checkbox.grid(row=0, column=0, sticky=tk.W, padx=(0, 20))
+        ToolTip(self.dark_mode_checkbox, msg="Toggle dark mode for reduced eye strain", delay=0.5)
+
+        ttk.Label(theme_frame, text="Accent Color:").grid(row=0, column=1, sticky=tk.W)
+
+        # Accent color preview button (using tk.Button for background color)
+        self.accent_color_btn = tk.Button(
+            theme_frame,
+            text="",
+            width=3,
+            bg=self.accent_color,
+            activebackground=self.accent_color,
+            relief=tk.RAISED,
+            command=self._choose_accent_color
+        )
+        self.accent_color_btn.grid(row=0, column=2, padx=(5, 0))
+        ToolTip(self.accent_color_btn, msg="Click to choose accent color for highlights", delay=0.5)
 
         # Right side: Queue panel
         self._setup_queue_panel(main_frame)
+
+        # Status bar at the bottom
+        self._setup_status_bar()
 
     def _setup_queue_panel(self, parent: ttk.Frame) -> None:
         """
@@ -184,12 +263,13 @@ class RSVPReaderUI:
         controls_frame = ttk.Frame(queue_frame)
         controls_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 5))
 
-        ttk.Button(controls_frame, text="Add Files", command=self._add_to_queue).grid(
-            row=0, column=0, padx=2
-        )
-        ttk.Button(controls_frame, text="Add Chapters", command=self._add_chapters_to_queue).grid(
-            row=0, column=1, padx=2
-        )
+        self.add_files_button = ttk.Button(controls_frame, text="Add Files", command=self._add_to_queue)
+        self.add_files_button.grid(row=0, column=0, padx=2)
+        ToolTip(self.add_files_button, msg="Add one or more files to the reading queue", delay=0.5)
+
+        self.add_chapters_button = ttk.Button(controls_frame, text="Add Chapters", command=self._add_chapters_to_queue)
+        self.add_chapters_button.grid(row=0, column=1, padx=2)
+        ToolTip(self.add_chapters_button, msg="Extract chapters from a file and add to queue", delay=0.5)
 
         # Queue listbox with scrollbar
         list_frame = ttk.Frame(queue_frame)
@@ -200,6 +280,7 @@ class RSVPReaderUI:
         self.queue_listbox = tk.Listbox(list_frame, selectmode=tk.SINGLE, height=10)
         self.queue_listbox.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self.queue_listbox.bind('<Double-1>', lambda e: self._play_selected())
+        ToolTip(self.queue_listbox, msg="Double-click to play an item", delay=0.5)
 
         scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=self.queue_listbox.yview)
         scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
@@ -209,24 +290,230 @@ class RSVPReaderUI:
         btn_frame = ttk.Frame(queue_frame)
         btn_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(5, 0))
 
-        ttk.Button(btn_frame, text="▲", width=3, command=self._move_up).grid(row=0, column=0, padx=2)
-        ttk.Button(btn_frame, text="▼", width=3, command=self._move_down).grid(row=0, column=1, padx=2)
-        ttk.Button(btn_frame, text="Remove", command=self._remove_from_queue).grid(row=0, column=2, padx=2)
-        ttk.Button(btn_frame, text="Clear", command=self._clear_queue).grid(row=0, column=3, padx=2)
+        self.move_up_button = ttk.Button(btn_frame, text="▲", width=3, command=self._move_up)
+        self.move_up_button.grid(row=0, column=0, padx=2)
+        ToolTip(self.move_up_button, msg="Move selected item up", delay=0.5)
+
+        self.move_down_button = ttk.Button(btn_frame, text="▼", width=3, command=self._move_down)
+        self.move_down_button.grid(row=0, column=1, padx=2)
+        ToolTip(self.move_down_button, msg="Move selected item down", delay=0.5)
+
+        self.remove_button = ttk.Button(btn_frame, text="Remove", command=self._remove_from_queue)
+        self.remove_button.grid(row=0, column=2, padx=2)
+        ToolTip(self.remove_button, msg="Remove selected item from queue", delay=0.5)
+
+        self.clear_button = ttk.Button(btn_frame, text="Clear", command=self._clear_queue)
+        self.clear_button.grid(row=0, column=3, padx=2)
+        ToolTip(self.clear_button, msg="Clear entire queue", delay=0.5)
 
         # Autoplay checkbox
         autoplay_frame = ttk.Frame(queue_frame)
         autoplay_frame.grid(row=3, column=0, sticky=(tk.W, tk.E), pady=(5, 0))
 
-        ttk.Checkbutton(
+        self.autoplay_checkbox = ttk.Checkbutton(
             autoplay_frame,
             text="Autoplay next",
             variable=self.autoplay_enabled
-        ).grid(row=0, column=0, sticky=tk.W)
-
-        ttk.Button(autoplay_frame, text="Play Selected", command=self._play_selected).grid(
-            row=0, column=1, padx=(10, 0)
         )
+        self.autoplay_checkbox.grid(row=0, column=0, sticky=tk.W)
+        ToolTip(self.autoplay_checkbox, msg="Automatically start next item when current finishes", delay=0.5)
+
+        self.play_selected_button = ttk.Button(autoplay_frame, text="Play Selected", command=self._play_selected)
+        self.play_selected_button.grid(row=0, column=1, padx=(10, 0))
+        ToolTip(self.play_selected_button, msg="Start playing selected queue item", delay=0.5)
+
+    def _setup_status_bar(self) -> None:
+        """
+        Set up the status bar at the bottom of the window.
+        """
+        self.status_bar = tk.Label(
+            self.root,
+            textvariable=self.status_var,
+            anchor=tk.W,
+            relief=tk.SUNKEN,
+            padx=10,
+            pady=5
+        )
+        self.status_bar.grid(row=1, column=0, sticky=(tk.W, tk.E))
+        ToolTip(self.status_bar, msg="Current playback status", delay=0.5)
+
+    def _update_status(self, message: str) -> None:
+        """
+        Update the status bar message.
+
+        Args:
+            message: Status message to display
+        """
+        self.status_var.set(message)
+
+    def _setup_keyboard_bindings(self) -> None:
+        """
+        Set up keyboard bindings for the application.
+        """
+        # Play/Pause with Space (except when in search entry)
+        self.root.bind('<space>', self._on_space_pressed)
+
+        # Navigation with arrow keys
+        self.root.bind('<Left>', lambda e: self._previous_word())
+        self.root.bind('<Right>', lambda e: self._next_word())
+
+        # Reset with R
+        self.root.bind('<r>', lambda e: self._reset())
+        self.root.bind('<R>', lambda e: self._reset())
+
+        # Open file with Ctrl+O
+        self.root.bind('<Control-o>', lambda e: self._open_file())
+        self.root.bind('<Control-O>', lambda e: self._open_file())
+
+        # Stop/Pause with Escape
+        self.root.bind('<Escape>', self._on_escape_pressed)
+
+    def _on_space_pressed(self, event: tk.Event) -> str:
+        """
+        Handle space key press for play/pause.
+        Ignores if focus is in search entry.
+        """
+        # Don't toggle play if typing in search entry
+        if event.widget == self.search_entry:
+            return ""
+        self._toggle_play()
+        return "break"  # Prevent default space behavior
+
+    def _on_escape_pressed(self, event: tk.Event) -> None:
+        """
+        Handle Escape key to stop playback.
+        """
+        if self.is_playing:
+            self._toggle_play()
+
+    def _toggle_dark_mode(self) -> None:
+        """
+        Toggle between light and dark mode.
+        """
+        if self.dark_mode_enabled.get():
+            self.current_theme = DARK_THEME
+        else:
+            self.current_theme = LIGHT_THEME
+        self._apply_theme()
+
+    def _choose_accent_color(self) -> None:
+        """
+        Open color chooser for accent color selection.
+        """
+        color = colorchooser.askcolor(
+            initialcolor=self.accent_color,
+            title="Choose Accent Color"
+        )
+        if color[1]:  # color is ((r, g, b), '#hexcolor')
+            self.accent_color = color[1]
+            self._apply_theme()
+
+    def _apply_theme(self) -> None:
+        """
+        Apply the current theme to all UI elements.
+        """
+        theme = self.current_theme
+        accent = self.accent_color
+
+        # Configure root window
+        self.root.configure(bg=theme["bg"])
+
+        # Configure ttk styles
+        style = ttk.Style()
+        style.theme_use('clam')  # Use clam theme as base for better customization
+
+        # Frame styles
+        style.configure("TFrame", background=theme["bg"])
+        style.configure("TLabelframe", background=theme["bg"])
+        style.configure("TLabelframe.Label", background=theme["bg"], foreground=theme["fg"])
+
+        # Label styles
+        style.configure("TLabel", background=theme["bg"], foreground=theme["fg"])
+
+        # Button styles
+        style.configure(
+            "TButton",
+            background=theme["button_bg"],
+            foreground=theme["fg"]
+        )
+        style.map(
+            "TButton",
+            background=[("active", accent), ("pressed", accent)],
+            foreground=[("active", "#ffffff"), ("pressed", "#ffffff")]
+        )
+
+        # Entry styles
+        style.configure(
+            "TEntry",
+            fieldbackground=theme["entry_bg"],
+            foreground=theme["entry_fg"],
+            insertcolor=theme["fg"]
+        )
+
+        # Scale (slider) styles
+        style.configure(
+            "TScale",
+            background=theme["bg"],
+            troughcolor=theme["entry_bg"]
+        )
+
+        # Progressbar styles
+        style.configure(
+            "TProgressbar",
+            background=accent,
+            troughcolor=theme["entry_bg"]
+        )
+
+        # Checkbutton styles
+        style.configure(
+            "TCheckbutton",
+            background=theme["bg"],
+            foreground=theme["fg"]
+        )
+        style.map(
+            "TCheckbutton",
+            background=[("active", theme["bg"])]
+        )
+
+        # Scrollbar styles
+        style.configure(
+            "TScrollbar",
+            background=theme["button_bg"],
+            troughcolor=theme["bg"]
+        )
+
+        # Update the main word display (tk.Label, not ttk)
+        if hasattr(self, 'word_label'):
+            display_fg = theme["display_fg"]
+            # Use accent color when playing
+            if self.is_playing:
+                display_fg = accent
+            self.word_label.configure(
+                bg=theme["display_bg"],
+                fg=display_fg
+            )
+
+        # Update queue listbox (tk.Listbox, not ttk)
+        if hasattr(self, 'queue_listbox'):
+            self.queue_listbox.configure(
+                bg=theme["listbox_bg"],
+                fg=theme["listbox_fg"],
+                selectbackground=accent,
+                selectforeground=theme["listbox_select_fg"],
+                highlightbackground=theme["bg"],
+                highlightcolor=accent
+            )
+
+        # Update accent color preview button if it exists
+        if hasattr(self, 'accent_color_btn'):
+            self.accent_color_btn.configure(bg=accent)
+
+        # Update status bar (tk.Label, not ttk)
+        if hasattr(self, 'status_bar'):
+            self.status_bar.configure(
+                bg=theme["button_bg"],
+                fg=theme["fg"]
+            )
 
     def _add_to_queue(self) -> None:
         """Add files to the queue."""
@@ -342,6 +629,7 @@ class RSVPReaderUI:
             self.queue_listbox.selection_clear(0, tk.END)
             self.queue_listbox.selection_set(index)
             self.queue_listbox.see(index)
+            self._update_status(f"Queue item {index + 1}/{len(self.queue)}: {name} - Ready")
 
     def _play_next_in_queue(self) -> None:
         """Advance to next item in queue if autoplay is enabled."""
@@ -379,12 +667,14 @@ class RSVPReaderUI:
                 self.displayer = RSVPTokenDisplayer(tokens, self.speed_var.get())
                 self.file_label.config(text=file_path.split('/')[-1])
                 self._update_display()
+                self._update_status(f"Loaded {len(tokens)} words - Ready")
                 messagebox.showinfo(
                     "File Loaded",
                     f"Successfully loaded {len(tokens)} words from file."
                 )
-                
+
             except Exception as e:
+                self._update_status("Error loading file")
                 messagebox.showerror("Error", f"Failed to load file: {str(e)}")
     
     def _update_display(self) -> None:
@@ -417,17 +707,25 @@ class RSVPReaderUI:
         if not self.displayer:
             messagebox.showinfo("No File", "Please load a file first.")
             return
-        
+
         self.is_playing = not self.is_playing
-        
+
         if self.is_playing:
             self.play_button.config(text="⏸ Pause")
+            self._update_status("Playing...")
             self._play_next()
         else:
             self.play_button.config(text="▶ Play")
             if self.after_id:
                 self.root.after_cancel(self.after_id)
                 self.after_id = None
+            # Show paused status with current position
+            current = self.displayer.get_current_index() + 1
+            total = self.displayer.get_total_tokens()
+            self._update_status(f"Paused at word {current} of {total}")
+
+        # Update display color based on play state
+        self._apply_theme()
     
     def _play_next(self) -> None:
         """
@@ -444,6 +742,8 @@ class RSVPReaderUI:
         else:
             self.is_playing = False
             self.play_button.config(text="▶ Play")
+            self._update_status("Finished")
+            self._apply_theme()
             # Try to advance to next queue item if autoplay is enabled
             self._play_next_in_queue()
     
@@ -489,7 +789,8 @@ class RSVPReaderUI:
         
         self.displayer.reset()
         self._update_display()
-    
+        self._update_status("Reset to beginning")
+
     def _update_speed(self, value: str) -> None:
         """
         Update the playback speed.
