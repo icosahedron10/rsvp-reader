@@ -7,6 +7,7 @@
 1. Goal: Allow for the parsing of .pub files.
    - Acceptance criteria: Testing the accurate parsing of a test file that is created to test the edge cases with respect to characters and sequencing.
    - Notes: For lengthy files with multiple chapters, use regex to separate the text into its requisite parts (chapters, parts, articles, etc.) and ensure that we create a RSVP output for each.
+   - Status: COMPLETE - Added .epub/.pub parsing using standard library (zipfile, xml). Added parse_chapters() method with regex detection for Chapter/Part/Article/Section headings. 11 new tests cover edge cases.
 2. Goal: Refine UI and create a short demo .txt file that will exhibit the features of the app without requiring additional input.
    - Acceptance criteria: A basic, 500-1000 word file of any composition that can be used to exhibit a clutter-free UI and all of the funcionallity of our early app.
    - Notes:

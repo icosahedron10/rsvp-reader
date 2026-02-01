@@ -14,9 +14,10 @@ RSVP Reader - A Python speed reading application using Rapid Serial Visual Prese
 All three parts are **fully implemented**:
 
 1. **Part One: File Parser** (`file_parser.py`) ✅ Complete
-   - `FileParser` class with `.txt` and `.pdf` support
+   - `FileParser` class with `.txt`, `.pdf`, `.epub`, and `.pub` support
    - Token preservation (punctuation, special chars)
    - Convenience function `parse_file()`
+   - Chapter detection via `parse_chapters()` method
 
 2. **Part Two: Token Displayer** (`token_displayer.py`) ✅ Complete
    - `RSVPTokenDisplayer` class
@@ -36,9 +37,9 @@ All three parts are **fully implemented**:
 
 ### Build/Test Status
 - **Dependencies installed**: PyPDF2 3.0.1, pytest 9.0.2, tkinter-tooltip 3.1.2
-- **All tests pass**: 30 tests (8 parser, 22 displayer) - verified Feb 1, 2026
+- **All tests pass**: 41 tests (19 parser, 22 displayer) - verified Feb 1, 2026
 - **Test files exist**:
-  - `test_file_parser.py` - 8 unit tests
+  - `test_file_parser.py` - 19 unit tests (including EPUB and chapter parsing)
   - `test_token_displayer.py` - 22 unit tests
   - `test_integration.py` - End-to-end integration test
 - **Demo**: `demo.py` demonstrates all features
@@ -61,8 +62,10 @@ All three parts are **fully implemented**:
 ### Known Issues
 
 ## Recent changes
+- 2026-02-01: Added EPUB/PUB file parsing support to FileParser
+- 2026-02-01: Added parse_chapters() method for chapter-separated output
+- 2026-02-01: Added 11 new tests for EPUB and chapter parsing (19 total parser tests)
 - 2026-02-01: Created demo.txt (652 words) for showcasing app features
 - 2026-02-01: Created CLAUDE.md for Claude Code guidance
-- 2026-02-01: Verified all 30 tests pass with installed dependencies
 
 ## Blockers / needs human input

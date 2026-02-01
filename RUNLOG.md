@@ -8,3 +8,9 @@
   - Tests run: `python -m unittest discover -s . -p "test_*.py" -v` - 30 tests, all passed
   - Files created: demo.txt, CLAUDE.md
   - Commits: ed04085
+
+- 2026-02-01 12:27:20 | Goal 1 Complete: EPUB/PUB parsing
+  - Summary: Added .epub/.pub file support to FileParser using standard library (zipfile, xml.etree). Added parse_chapters() method with regex for Chapter/Part/Article/Section detection.
+  - Tests run: `python -m unittest discover -s . -p "test_*.py" -v` - 41 tests, all passed
+  - Files modified: file_parser.py, test_file_parser.py
+  - Commits: (pending)
