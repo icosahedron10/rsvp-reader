@@ -18,7 +18,6 @@
    - Status: COMPLETE - Queue panel added with: Add Files (multiple selection), Add Chapters (extracts chapters from single file), reorder (▲/▼), remove, clear, autoplay toggle. Double-click or Play Selected to start. Auto-advances when file ends.
 
 ## Constraints
-- Never push to origin from this machine
 - Commit often and with descriptive messages
 - Keep diffs small and reviewable
 - Prefer minimal dependencies
