@@ -1,0 +1,57 @@
+Welcome to the RSVP Speed Reader Demo
+
+This demonstration file will help you experience the power of Rapid Serial Visual Presentation. By showing words one at a time, your eyes stay fixed in place while text flows naturally into your mind. This technique eliminates subvocalization, the habit of silently pronouncing words as you read, which typically limits reading speed.
+
+Getting Started with Speed Reading
+
+When you first begin practicing speed reading, start at a comfortable pace. Most people read at around 200 to 250 words per minute when reading traditionally. With RSVP, you can gradually increase to 400, 500, or even 800 words per minute with practice.
+
+The key is finding your sweet spot. Push yourself enough to improve, but not so fast that comprehension suffers. Remember: speed without understanding is just word recognition, not reading.
+
+How This Application Works
+
+The RSVP Reader you are using right now has several helpful features designed to enhance your experience.
+
+First, use the speed slider to adjust your words per minute. Start around 300 WPM and work your way up as you become more comfortable. Watch how the display changes pace as you adjust.
+
+Second, try the navigation controls. The Previous and Next buttons let you move through the text manually. The Reset button takes you back to the beginning. These controls help when you need to reread a section or want to start fresh.
+
+Third, explore the search functionality. Type a word in the search bar and press Enter or click Search. The reader will jump directly to that word. Click Find Next to locate additional occurrences.
+
+The Science Behind RSVP
+
+Research shows that traditional reading involves many small eye movements called saccades. Between saccades, your eyes pause briefly in what scientists call fixations. Much of your reading time is actually spent moving your eyes rather than processing words.
+
+RSVP eliminates this inefficiency. Words appear exactly where you are looking. No eye movement required. Your brain receives a steady stream of text at precisely the rate you choose.
+
+Studies have demonstrated that trained RSVP readers can process text significantly faster than traditional readers while maintaining comparable comprehension. The technique works because it leverages your brain's natural ability to process visual information rapidly.
+
+Practical Tips for Success
+
+Here are some strategies to maximize your speed reading progress:
+
+Build gradually. Increase speed by 50 WPM at a time. Give yourself several sessions to adapt before pushing further.
+
+Read material you find interesting. Motivation matters. When content engages you, maintaining focus becomes much easier.
+
+Practice regularly. Short daily sessions work better than occasional marathon attempts. Fifteen minutes each day builds skill faster than an hour once per week.
+
+Take breaks when needed. Mental fatigue reduces comprehension. Better to pause and return refreshed than to push through declining performance.
+
+Vary your reading material. Different text types present different challenges. Mix fiction with nonfiction, simple with complex.
+
+What You Should Notice
+
+As you read these words appearing one by one, pay attention to your experience. Are you pronouncing each word silently? Try to relax that habit. Let words flow directly into meaning without the intermediate step of internal speech.
+
+Notice how punctuation affects rhythm. Commas create natural pauses. Periods mark endings. Question marks signal queries. The RSVP format preserves these cues, keeping text structure intact.
+
+Watch the progress bar below. It shows your position in the document, helping you gauge how much remains. The position counter provides exact numbers when you need precision.
+
+Moving Forward
+
+This demo file contains approximately 600 words, enough to give you a genuine feel for speed reading without taking too much time. After finishing, try loading your own text files or PDFs to continue practicing.
+
+Remember that speed reading is a skill. Like any skill, it improves with deliberate practice over time. Be patient with yourself. Celebrate progress. Keep pushing your boundaries while respecting your limits.
+
+Welcome to faster reading. Your journey starts now.
