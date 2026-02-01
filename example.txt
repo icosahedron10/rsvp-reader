@@ -1,0 +1,23 @@
+The quick brown fox jumps over the lazy dog.
+
+This is a sample text file for testing the RSVP Reader application. It contains multiple paragraphs with various punctuation marks, special characters, and formatting.
+
+Here are some interesting facts:
+- Speed reading can help you read faster
+- RSVP (Rapid Serial Visual Presentation) is an effective technique
+- Practice makes perfect!
+
+Some questions to consider:
+1. How fast can you read?
+2. What's your comprehension like at high speeds?
+3. Can you maintain focus throughout?
+
+Let's include some special characters: @username #hashtag $money 50% (parentheses) [brackets] {braces} "quotes" and 'apostrophes'.
+
+Don't forget about contractions like: it's, we're, they've, won't, can't.
+
+Email: test@example.com
+Website: https://example.com
+Phone: (555) 123-4567
+
+The end.
