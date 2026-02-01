@@ -19,4 +19,4 @@
   - Summary: Added queue panel to UI with Add Files (multi-select), Add Chapters (chapter extraction), reorder buttons, remove/clear, autoplay toggle. Files auto-advance when playback ends.
   - Tests run: `python -m unittest discover -s . -p "test_*.py" -v` - 41 tests, all passed
   - Files modified: rsvp_reader.py, STATE.md, GOALS.md
-  - Commits: (pending)
+  - Commits: 4fc0502
