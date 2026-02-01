@@ -1,147 +1,211 @@
 # RSVP Reader
 
-Basic parsing of text based files into Rapid Serial Visual Presentation streams for efficient speed reading.
+A Python speed-reading application that displays text one word at a time using Rapid Serial Visual Presentation (RSVP).
 
-## Overview
+## Quick Start
 
-The RSVP (Rapid Serial Visual Presentation) Reader is a Python application that enables speed reading by displaying words one at a time at a controlled pace. The project is organized into three main components:
-
-### Part One: File Parsing
-Parses text-based files (.txt and .pdf) into tokens while carefully preserving the structure of special characters and formatting.
-
-**Features:**
-- Support for `.txt` and `.pdf` files
-- Preserves punctuation and special characters
-- Maintains text structure and formatting
-- Tokenizes text into individual words
-
-**Module:** `file_parser.py`
-
-### Part Two: Token Displayer
-Creates a class for displaying tokens in RSVP format, managing the presentation logic and playback controls.
-
-**Features:**
-- Configurable reading speed (WPM - Words Per Minute)
-- Playback controls (play, pause, stop, reset)
-- Navigation (next, previous, seek)
-- Progress tracking
-- Search functionality
-
-**Module:** `token_displayer.py`
-
-### Part Three: RSVP Reader UI
-A graphical user interface built with Tkinter that integrates all components and provides user control.
-
-**Features:**
-- File selection dialog
-- Large, clear word display
-- Playback controls (play/pause, next, previous, reset)
-- Speed control slider (100-1000 WPM)
-- Progress bar and position indicator
-- Search bar with "Find Next" functionality
-
-**Module:** `rsvp_reader.py`
-
-## Installation
-
-1. Clone the repository:
 ```bash
+# Clone the repository
 git clone https://github.com/icosahedron10/rsvp-reader.git
 cd rsvp-reader
-```
 
-2. Install dependencies:
-```bash
+# Install dependencies
 pip install -r requirements.txt
-```
 
-## Usage
-
-### Running the GUI Application
-
-```bash
+# Run the application
 python rsvp_reader.py
 ```
 
-This will launch the graphical interface where you can:
-1. Click "Open File" to select a .txt or .pdf file
-2. Use the playback controls to start/pause reading
-3. Adjust the speed slider to your preferred reading pace
-4. Use the search bar to find specific words
-5. Navigate through the text using Previous/Next buttons
+That's it! The GUI will open and you can start speed reading immediately.
 
-### Using as a Library
+## What is RSVP?
+
+RSVP (Rapid Serial Visual Presentation) is a speed-reading technique that displays words one at a time in a fixed location. By eliminating eye movement across the page, readers can achieve significantly faster reading speeds while maintaining comprehension.
+
+## Features
+
+- **Multiple File Formats**: Supports `.txt`, `.pdf`, `.epub`, and `.pub` files
+- **Adjustable Speed**: 100 to 1000 words per minute (WPM)
+- **Playback Controls**: Play, pause, previous, next, and reset
+- **Search**: Find and jump to specific words
+- **Progress Tracking**: Visual progress bar and word counter
+- **Reading Queue**: Queue multiple files or chapters for continuous reading
+- **Chapter Detection**: Automatically splits books into chapters
+- **Autoplay**: Optionally auto-advance to the next queued item
+
+## System Requirements
+
+- Python 3.7 or higher
+- tkinter (usually included with Python)
+- PyPDF2 (for PDF support)
+
+### Platform-Specific Notes
+
+| Platform | tkinter Installation |
+|----------|---------------------|
+| **Windows** | Included with Python |
+| **macOS** | Included with Python |
+| **Ubuntu/Debian** | `sudo apt-get install python3-tk` |
+| **Fedora** | `sudo dnf install python3-tkinter` |
+| **Arch** | `sudo pacman -S tk` |
+
+## Usage Guide
+
+### Opening Files
+
+1. Click **"Open File"** to load a single file
+2. Or use **"Add Files"** in the queue panel to add multiple files
+3. For books with chapters, use **"Add Chapters"** to split them automatically
+
+### Playback Controls
+
+| Button | Action |
+|--------|--------|
+| **▶ Play / ⏸ Pause** | Start or pause automatic playback |
+| **⏮ Previous** | Go back one word |
+| **⏭ Next** | Advance one word |
+| **⏹ Reset** | Return to the beginning |
+
+### Speed Settings
+
+Use the WPM slider to adjust your reading speed:
+
+| Speed | Best For |
+|-------|----------|
+| 200-300 WPM | Beginners, complex material |
+| 300-450 WPM | Comfortable speed reading |
+| 450-600 WPM | Intermediate speed readers |
+| 600-1000 WPM | Advanced speed readers |
+
+### Search
+
+1. Type a word in the search box
+2. Press **Enter** or click **Search** to find the first occurrence
+3. Click **Find Next** to jump to subsequent matches
+
+### Managing the Reading Queue
+
+The queue panel on the right lets you organize your reading session:
+
+- **Add Files**: Add multiple files to the queue
+- **Add Chapters**: Extract chapters from a book and queue them separately
+- **▲ / ▼**: Reorder items in the queue
+- **Remove**: Remove the selected item
+- **Clear**: Empty the entire queue
+- **Autoplay next**: When enabled, automatically starts the next item when one finishes
+- **Double-click**: Play any item in the queue
+
+## Supported File Types
+
+| Format | Extension | Notes |
+|--------|-----------|-------|
+| Plain Text | `.txt` | UTF-8 encoded |
+| PDF | `.pdf` | Text-based PDFs (not scanned images) |
+| EPUB | `.epub` | Standard e-book format |
+| PUB | `.pub` | E-book format variant |
+
+## Using as a Library
+
+You can integrate the RSVP components into your own Python projects:
 
 ```python
 from file_parser import FileParser
 from token_displayer import RSVPTokenDisplayer
 
-# Parse a file
-parser = FileParser("example.txt")
+# Parse a file into tokens
+parser = FileParser("book.epub")
 tokens = parser.parse()
 
-# Create displayer
-displayer = RSVPTokenDisplayer(tokens, wpm=300)
+# Or parse into chapters
+chapters = parser.parse_chapters()
+for chapter_name, chapter_tokens in chapters.items():
+    print(f"{chapter_name}: {len(chapter_tokens)} words")
 
-# Navigate and search
-displayer.next_token()
-displayer.set_speed(500)
-index = displayer.search("keyword")
+# Create a displayer for navigation
+displayer = RSVPTokenDisplayer(tokens, wpm=400)
+
+# Navigate through tokens
+print(displayer.get_current_token())  # Get current word
+displayer.next_token()                 # Move forward
+displayer.previous_token()             # Move backward
+displayer.seek(100)                    # Jump to position
+displayer.set_speed(500)               # Change WPM
+
+# Search for text
+index = displayer.search("keyword", start_from=0)
+if index is not None:
+    displayer.seek(index)
 ```
 
 ## Project Structure
 
 ```
 rsvp-reader/
-├── file_parser.py          # Part 1: File parsing module
-├── token_displayer.py      # Part 2: RSVP token displayer
-├── rsvp_reader.py          # Part 3: GUI application
-├── test_file_parser.py     # Tests for file parser
-├── test_token_displayer.py # Tests for token displayer
+├── rsvp_reader.py          # Main GUI application
+├── file_parser.py          # File parsing (TXT, PDF, EPUB)
+├── token_displayer.py      # Token navigation and playback state
+├── test_file_parser.py     # Unit tests for file parser
+├── test_token_displayer.py # Unit tests for token displayer
 ├── test_integration.py     # Integration tests
-├── example.txt             # Example text file
+├── example.txt             # Sample text file for testing
 ├── requirements.txt        # Python dependencies
-└── README.md              # This file
+└── README.md               # This file
 ```
 
-## Testing
+## Running Tests
 
-Run all tests:
 ```bash
+# Run all tests
 python -m unittest discover -s . -p "test_*.py" -v
-```
 
-Run specific test modules:
-```bash
+# Run specific test files
 python -m unittest test_file_parser.py -v
 python -m unittest test_token_displayer.py -v
-```
 
-Run integration test:
-```bash
+# Run integration tests
 python test_integration.py
 ```
 
-## Requirements
+## Troubleshooting
 
-- Python 3.7+
-- PyPDF2 (for PDF support)
-- tkinter (usually comes with Python)
+### "No module named 'tkinter'"
 
-## Features
+Install tkinter for your platform (see [System Requirements](#system-requirements)).
 
-- **Multiple File Formats:** Support for .txt and .pdf files
-- **Customizable Speed:** Adjust reading speed from 100 to 1000 WPM
-- **Search Functionality:** Find and jump to specific words
-- **Progress Tracking:** Visual progress bar and position counter
-- **Playback Controls:** Full control over reading experience
-- **Token Preservation:** Maintains special characters and formatting
+### "No module named 'PyPDF2'"
 
-## License
+```bash
+pip install PyPDF2
+```
 
-This project is open source and available under the MIT License.
+### PDF file shows no content
+
+The PDF might contain only scanned images rather than text. RSVP Reader can only extract text-based PDFs.
+
+### EPUB file doesn't load correctly
+
+Some EPUBs have non-standard formatting. Try converting to a standard EPUB format using Calibre or similar tools.
+
+### Words appear too fast or slow
+
+Adjust the WPM slider. Start at 250-300 WPM and gradually increase as you become comfortable.
+
+### Application window is too small
+
+Resize the window by dragging its edges. The layout will adapt to the new size.
+
+## Tips for Effective Speed Reading
+
+1. **Start slow**: Begin at 250-300 WPM and gradually increase
+2. **Focus on the center**: Keep your eyes fixed on the display area
+3. **Reduce subvocalization**: Try not to "speak" words in your mind
+4. **Practice regularly**: Speed reading improves with consistent practice
+5. **Monitor comprehension**: Slow down if you're not retaining information
 
 ## Contributing
 
 Contributions are welcome! Please feel free to submit a Pull Request.
 
+## License
+
+This project is open source and available under the MIT License.

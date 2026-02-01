@@ -1,131 +1,78 @@
 # RSVP Reader - Quick Start Guide
 
+Get reading in under a minute.
+
 ## Installation
 
 ```bash
-# Clone the repository
 git clone https://github.com/icosahedron10/rsvp-reader.git
 cd rsvp-reader
-
-# Install dependencies
 pip install -r requirements.txt
 ```
 
-## Running the Application
+## Launch
 
 ```bash
 python rsvp_reader.py
 ```
 
-## Using the GUI
+## Basic Workflow
 
 ### 1. Load a File
-- Click **"Open File"** button
-- Select a `.txt` or `.pdf` file
-- The first word will appear in the display
 
-### 2. Control Playback
-- **▶ Play/⏸ Pause**: Start or pause automatic word display
-- **⏮ Previous**: Go back one word
-- **⏭ Next**: Advance one word
-- **⏹ Reset**: Return to the beginning
+Click **"Open File"** and select a `.txt`, `.pdf`, `.epub`, or `.pub` file.
+
+### 2. Start Reading
+
+Click **▶ Play** to begin. Words display one at a time in the center.
 
 ### 3. Adjust Speed
-- Use the **WPM slider** to set reading speed
-- Range: 100 to 1000 words per minute
-- Changes take effect immediately
-- Recommended speeds:
-  - 200-300 WPM: Comfortable reading
-  - 400-600 WPM: Speed reading
-  - 700-1000 WPM: Advanced speed reading
 
-### 4. Search for Words
-- Type a word in the **search box**
-- Click **"Search"** to find first occurrence
-- Click **"Find Next"** to find next occurrence
-- Search is case-insensitive
+Drag the **WPM slider** to set your pace:
+- **250-300**: Comfortable reading
+- **400-500**: Speed reading
+- **600+**: Advanced
 
-### 5. Track Progress
-- **Progress bar**: Visual representation
-- **Position counter**: Shows current/total words
-- Updated in real-time as you read
+### 4. Control Playback
 
-## Tips for Effective Speed Reading
+| Button | Action |
+|--------|--------|
+| ▶ / ⏸ | Play/Pause |
+| ⏮ | Previous word |
+| ⏭ | Next word |
+| ⏹ | Reset to start |
 
-1. **Start Slow**: Begin at 250-300 WPM and gradually increase
-2. **Focus**: Keep your eyes centered on the display area
-3. **Don't Subvocalize**: Avoid "speaking" words in your mind
-4. **Practice**: Speed reading is a skill that improves with practice
-5. **Comprehension**: If comprehension drops, reduce speed
+### 5. Search
 
-## Keyboard Shortcuts (Future Enhancement)
-The current version uses button controls. Future versions may add:
-- `Space`: Play/Pause
-- `Left Arrow`: Previous word
-- `Right Arrow`: Next word
-- `Ctrl+F`: Focus search box
-- `Ctrl+R`: Reset
+Type in the search box and press **Enter** to jump to that word.
 
-## Supported File Types
+## Queue Panel (Right Side)
 
-- **Text Files (.txt)**: Full support with UTF-8 encoding
-- **PDF Files (.pdf)**: Extracts text from all pages
+For longer reading sessions:
+
+- **Add Files**: Queue multiple files
+- **Add Chapters**: Split a book into chapters automatically
+- **Double-click**: Jump to any queued item
+- **Autoplay next**: Continue to next item when current one ends
 
 ## Troubleshooting
 
-**Problem**: "No module named 'tkinter'"
-**Solution**: Install tkinter:
-- Ubuntu/Debian: `sudo apt-get install python3-tk`
-- macOS: Included with Python
-- Windows: Included with Python
+| Problem | Solution |
+|---------|----------|
+| "No module named 'tkinter'" | Ubuntu: `sudo apt-get install python3-tk` |
+| "No module named 'PyPDF2'" | `pip install PyPDF2` |
+| PDF shows nothing | PDF may be scanned images, not text |
 
-**Problem**: "No module named 'PyPDF2'"
-**Solution**: `pip install PyPDF2`
+## Supported Files
 
-**Problem**: PDF file doesn't load
-**Solution**: Ensure the PDF contains text (not just images)
+- `.txt` - Plain text (UTF-8)
+- `.pdf` - PDF documents (text-based)
+- `.epub` / `.pub` - E-books
 
-**Problem**: Words display too fast/slow
-**Solution**: Adjust the WPM slider to your comfortable reading speed
+## Next Steps
 
-## Examples
+- See **README.md** for full documentation
+- Try `example.txt` to test the application
+- Run `python demo.py` for a feature demonstration
 
-### Loading a Text File
-1. Click "Open File"
-2. Navigate to `example.txt`
-3. Click "Open"
-4. You'll see "The" (first word) in the display
-
-### Speed Reading Session
-1. Load your file
-2. Set speed to 400 WPM
-3. Click "▶ Play"
-4. Focus on the center of the display
-5. Click "⏸ Pause" when you need a break
-
-### Finding Specific Content
-1. Type "keyword" in search box
-2. Click "Search"
-3. The display jumps to that word
-4. Click "Find Next" to find more occurrences
-
-## Command Line Testing
-
-```bash
-# Run all tests
-python -m unittest discover -s . -p "test_*.py" -v
-
-# Run demonstration
-python demo.py
-
-# Run integration test
-python test_integration.py
-```
-
-## Getting Help
-
-- Check the README.md for detailed documentation
-- Review PROJECT_SUMMARY.md for technical details
-- Run demo.py to see features in action
-
-Enjoy speed reading!
+Happy speed reading!
