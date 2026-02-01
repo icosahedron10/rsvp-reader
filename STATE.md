@@ -27,13 +27,19 @@ All three parts are **fully implemented**:
    - Progress tracking
 
 3. **Part Three: RSVP Reader UI** (`rsvp_reader.py`) ✅ Complete
-   - Tkinter-based GUI (800x600 window)
-   - File selection dialog
+   - Tkinter-based GUI (1000x650 window)
+   - File selection dialog with EPUB/PUB support
    - Large word display (48pt bold)
    - Playback controls (play/pause/next/previous/reset)
    - Speed slider (100-1000 WPM)
    - Search bar with Find Next
    - Progress bar and position counter
+   - **Queue panel** with:
+     - Add Files / Add Chapters buttons
+     - Queue listbox with reordering (▲/▼)
+     - Remove and Clear buttons
+     - Autoplay toggle for automatic progression
+     - Double-click or Play Selected to start
 
 ### Build/Test Status
 - **Dependencies installed**: PyPDF2 3.0.1, pytest 9.0.2, tkinter-tooltip 3.1.2
@@ -62,6 +68,8 @@ All three parts are **fully implemented**:
 ### Known Issues
 
 ## Recent changes
+- 2026-02-01: Added queue panel to UI with Add Files, Add Chapters, reordering, remove, autoplay
+- 2026-02-01: Updated file dialogs to support .epub/.pub files
 - 2026-02-01: Added EPUB/PUB file parsing support to FileParser
 - 2026-02-01: Added parse_chapters() method for chapter-separated output
 - 2026-02-01: Added 11 new tests for EPUB and chapter parsing (19 total parser tests)

@@ -15,6 +15,7 @@
 3. Goal: Chapter queueing for the .pub files after being broken down into chapter-like sections. Imagine that we can take several outputs and have them in a queue where when one ends, the next begins, you can rearrange the order of the files, add and remove with ease.
    - Acceptance criteria: Fully funcioning queue built into the UI with a Browse button. The user can select several outputs and add them to the queue. User can easily remove and rearrange files in the queue. Autoplay button near the queue to handle whether the next file should play following the end of the current file.
    - Notes:
+   - Status: COMPLETE - Queue panel added with: Add Files (multiple selection), Add Chapters (extracts chapters from single file), reorder (▲/▼), remove, clear, autoplay toggle. Double-click or Play Selected to start. Auto-advances when file ends.
 
 ## Constraints
 - Never push to origin from this machine
