@@ -9,6 +9,7 @@ from tkinter import ttk, filedialog, messagebox
 from typing import Optional, List, Tuple
 from file_parser import FileParser
 from token_displayer import RSVPTokenDisplayer
+from tktooltip import ToolTip
 
 
 class RSVPReaderUI:
@@ -37,6 +38,7 @@ class RSVPReaderUI:
         self.autoplay_enabled = tk.BooleanVar(value=True)
 
         self._setup_ui()
+        self._setup_keyboard_bindings()
         
     def _setup_ui(self) -> None:
         """
@@ -63,9 +65,9 @@ class RSVPReaderUI:
         file_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 10))
         file_frame.columnconfigure(0, weight=1)
 
-        ttk.Button(file_frame, text="Open File", command=self._open_file).grid(
-            row=0, column=0, sticky=tk.W
-        )
+        self.open_button = ttk.Button(file_frame, text="Open File", command=self._open_file)
+        self.open_button.grid(row=0, column=0, sticky=tk.W)
+        ToolTip(self.open_button, msg="Open a file (Ctrl+O)", delay=0.5)
 
         self.file_label = ttk.Label(file_frame, text="No file loaded")
         self.file_label.grid(row=0, column=1, sticky=tk.W, padx=(10, 0))
@@ -114,18 +116,19 @@ class RSVPReaderUI:
             control_frame, text="▶ Play", command=self._toggle_play
         )
         self.play_button.grid(row=0, column=0, padx=5)
+        ToolTip(self.play_button, msg="Play/Pause (Space)", delay=0.5)
 
-        ttk.Button(control_frame, text="⏮ Previous", command=self._previous_word).grid(
-            row=0, column=1, padx=5
-        )
+        self.prev_button = ttk.Button(control_frame, text="⏮ Previous", command=self._previous_word)
+        self.prev_button.grid(row=0, column=1, padx=5)
+        ToolTip(self.prev_button, msg="Previous word (Left Arrow)", delay=0.5)
 
-        ttk.Button(control_frame, text="⏭ Next", command=self._next_word).grid(
-            row=0, column=2, padx=5
-        )
+        self.next_button = ttk.Button(control_frame, text="⏭ Next", command=self._next_word)
+        self.next_button.grid(row=0, column=2, padx=5)
+        ToolTip(self.next_button, msg="Next word (Right Arrow)", delay=0.5)
 
-        ttk.Button(control_frame, text="⏹ Reset", command=self._reset).grid(
-            row=0, column=3, padx=5
-        )
+        self.reset_button = ttk.Button(control_frame, text="⏹ Reset", command=self._reset)
+        self.reset_button.grid(row=0, column=3, padx=5)
+        ToolTip(self.reset_button, msg="Reset to beginning (R)", delay=0.5)
 
         # Speed control section
         speed_frame = ttk.LabelFrame(reader_frame, text="Speed Control", padding="10")
@@ -135,7 +138,7 @@ class RSVPReaderUI:
         ttk.Label(speed_frame, text="WPM:").grid(row=0, column=0, sticky=tk.W)
 
         self.speed_var = tk.IntVar(value=300)
-        speed_slider = ttk.Scale(
+        self.speed_slider = ttk.Scale(
             speed_frame,
             from_=100,
             to=1000,
@@ -143,7 +146,8 @@ class RSVPReaderUI:
             variable=self.speed_var,
             command=self._update_speed
         )
-        speed_slider.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
+        self.speed_slider.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
+        ToolTip(self.speed_slider, msg="Reading speed (100-1000 words per minute)", delay=0.5)
 
         self.speed_label = ttk.Label(speed_frame, text="300 WPM")
         self.speed_label.grid(row=0, column=2, sticky=tk.E)
@@ -156,17 +160,18 @@ class RSVPReaderUI:
         ttk.Label(search_frame, text="Find:").grid(row=0, column=0, sticky=tk.W)
 
         self.search_var = tk.StringVar()
-        search_entry = ttk.Entry(search_frame, textvariable=self.search_var)
-        search_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
-        search_entry.bind('<Return>', lambda e: self._search())
+        self.search_entry = ttk.Entry(search_frame, textvariable=self.search_var)
+        self.search_entry.grid(row=0, column=1, sticky=(tk.W, tk.E), padx=10)
+        self.search_entry.bind('<Return>', lambda e: self._search())
+        ToolTip(self.search_entry, msg="Type text to find in document (Enter to search)", delay=0.5)
 
-        ttk.Button(search_frame, text="Search", command=self._search).grid(
-            row=0, column=2, padx=(0, 5)
-        )
+        self.search_button = ttk.Button(search_frame, text="Search", command=self._search)
+        self.search_button.grid(row=0, column=2, padx=(0, 5))
+        ToolTip(self.search_button, msg="Find text in document", delay=0.5)
 
-        ttk.Button(search_frame, text="Find Next", command=self._search_next).grid(
-            row=0, column=3
-        )
+        self.find_next_button = ttk.Button(search_frame, text="Find Next", command=self._search_next)
+        self.find_next_button.grid(row=0, column=3)
+        ToolTip(self.find_next_button, msg="Find next occurrence", delay=0.5)
 
         # Right side: Queue panel
         self._setup_queue_panel(main_frame)
@@ -184,12 +189,13 @@ class RSVPReaderUI:
         controls_frame = ttk.Frame(queue_frame)
         controls_frame.grid(row=0, column=0, sticky=(tk.W, tk.E), pady=(0, 5))
 
-        ttk.Button(controls_frame, text="Add Files", command=self._add_to_queue).grid(
-            row=0, column=0, padx=2
-        )
-        ttk.Button(controls_frame, text="Add Chapters", command=self._add_chapters_to_queue).grid(
-            row=0, column=1, padx=2
-        )
+        self.add_files_button = ttk.Button(controls_frame, text="Add Files", command=self._add_to_queue)
+        self.add_files_button.grid(row=0, column=0, padx=2)
+        ToolTip(self.add_files_button, msg="Add one or more files to the reading queue", delay=0.5)
+
+        self.add_chapters_button = ttk.Button(controls_frame, text="Add Chapters", command=self._add_chapters_to_queue)
+        self.add_chapters_button.grid(row=0, column=1, padx=2)
+        ToolTip(self.add_chapters_button, msg="Extract chapters from a file and add to queue", delay=0.5)
 
         # Queue listbox with scrollbar
         list_frame = ttk.Frame(queue_frame)
@@ -200,6 +206,7 @@ class RSVPReaderUI:
         self.queue_listbox = tk.Listbox(list_frame, selectmode=tk.SINGLE, height=10)
         self.queue_listbox.grid(row=0, column=0, sticky=(tk.W, tk.E, tk.N, tk.S))
         self.queue_listbox.bind('<Double-1>', lambda e: self._play_selected())
+        ToolTip(self.queue_listbox, msg="Double-click to play an item", delay=0.5)
 
         scrollbar = ttk.Scrollbar(list_frame, orient=tk.VERTICAL, command=self.queue_listbox.yview)
         scrollbar.grid(row=0, column=1, sticky=(tk.N, tk.S))
@@ -209,24 +216,77 @@ class RSVPReaderUI:
         btn_frame = ttk.Frame(queue_frame)
         btn_frame.grid(row=2, column=0, sticky=(tk.W, tk.E), pady=(5, 0))
 
-        ttk.Button(btn_frame, text="▲", width=3, command=self._move_up).grid(row=0, column=0, padx=2)
-        ttk.Button(btn_frame, text="▼", width=3, command=self._move_down).grid(row=0, column=1, padx=2)
-        ttk.Button(btn_frame, text="Remove", command=self._remove_from_queue).grid(row=0, column=2, padx=2)
-        ttk.Button(btn_frame, text="Clear", command=self._clear_queue).grid(row=0, column=3, padx=2)
+        self.move_up_button = ttk.Button(btn_frame, text="▲", width=3, command=self._move_up)
+        self.move_up_button.grid(row=0, column=0, padx=2)
+        ToolTip(self.move_up_button, msg="Move selected item up", delay=0.5)
+
+        self.move_down_button = ttk.Button(btn_frame, text="▼", width=3, command=self._move_down)
+        self.move_down_button.grid(row=0, column=1, padx=2)
+        ToolTip(self.move_down_button, msg="Move selected item down", delay=0.5)
+
+        self.remove_button = ttk.Button(btn_frame, text="Remove", command=self._remove_from_queue)
+        self.remove_button.grid(row=0, column=2, padx=2)
+        ToolTip(self.remove_button, msg="Remove selected item from queue", delay=0.5)
+
+        self.clear_button = ttk.Button(btn_frame, text="Clear", command=self._clear_queue)
+        self.clear_button.grid(row=0, column=3, padx=2)
+        ToolTip(self.clear_button, msg="Clear entire queue", delay=0.5)
 
         # Autoplay checkbox
         autoplay_frame = ttk.Frame(queue_frame)
         autoplay_frame.grid(row=3, column=0, sticky=(tk.W, tk.E), pady=(5, 0))
 
-        ttk.Checkbutton(
+        self.autoplay_checkbox = ttk.Checkbutton(
             autoplay_frame,
             text="Autoplay next",
             variable=self.autoplay_enabled
-        ).grid(row=0, column=0, sticky=tk.W)
-
-        ttk.Button(autoplay_frame, text="Play Selected", command=self._play_selected).grid(
-            row=0, column=1, padx=(10, 0)
         )
+        self.autoplay_checkbox.grid(row=0, column=0, sticky=tk.W)
+        ToolTip(self.autoplay_checkbox, msg="Automatically start next item when current finishes", delay=0.5)
+
+        self.play_selected_button = ttk.Button(autoplay_frame, text="Play Selected", command=self._play_selected)
+        self.play_selected_button.grid(row=0, column=1, padx=(10, 0))
+        ToolTip(self.play_selected_button, msg="Start playing selected queue item", delay=0.5)
+
+    def _setup_keyboard_bindings(self) -> None:
+        """
+        Set up keyboard bindings for the application.
+        """
+        # Play/Pause with Space (except when in search entry)
+        self.root.bind('<space>', self._on_space_pressed)
+
+        # Navigation with arrow keys
+        self.root.bind('<Left>', lambda e: self._previous_word())
+        self.root.bind('<Right>', lambda e: self._next_word())
+
+        # Reset with R
+        self.root.bind('<r>', lambda e: self._reset())
+        self.root.bind('<R>', lambda e: self._reset())
+
+        # Open file with Ctrl+O
+        self.root.bind('<Control-o>', lambda e: self._open_file())
+        self.root.bind('<Control-O>', lambda e: self._open_file())
+
+        # Stop/Pause with Escape
+        self.root.bind('<Escape>', self._on_escape_pressed)
+
+    def _on_space_pressed(self, event: tk.Event) -> str:
+        """
+        Handle space key press for play/pause.
+        Ignores if focus is in search entry.
+        """
+        # Don't toggle play if typing in search entry
+        if event.widget == self.search_entry:
+            return ""
+        self._toggle_play()
+        return "break"  # Prevent default space behavior
+
+    def _on_escape_pressed(self, event: tk.Event) -> None:
+        """
+        Handle Escape key to stop playback.
+        """
+        if self.is_playing:
+            self._toggle_play()
 
     def _add_to_queue(self) -> None:
         """Add files to the queue."""

@@ -304,13 +304,13 @@ def run_claude(prompt: str, max_turns: int, output_format: str, json_schema=None
     if json_schema is not None:
         cmd += ["--json-schema", json.dumps(json_schema)]
 
-    cmd.append(prompt)
-
+    # Pass prompt via stdin for reliability with many CLI args
     try:
         p = subprocess.run(
             cmd,
             cwd=str(WORKTREE),
             text=True,
+            input=prompt,
             capture_output=True,
             timeout=DEFAULT_CLAUDE_TIMEOUT_SECS,
         )
