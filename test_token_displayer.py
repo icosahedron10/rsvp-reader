@@ -155,11 +155,11 @@ class TestRSVPTokenDisplayer(unittest.TestCase):
     
     def test_search_from_start_index(self):
         """Test search from specific start index."""
-        # Search for "is" starting from index 0 (will find "This" which contains "is")
+        # Search for "is" starting from index 0 (will find "This" which contains "is" as substring)
         index = self.displayer.search("is", 0)
-        self.assertEqual(index, 2)  # "This"
+        self.assertEqual(index, 2)  # "This" contains "is"
         
-        # Search for "is" starting from index 3 (will find "is")
+        # Search for "is" starting from index 3 (will find exact token "is")
         index = self.displayer.search("is", 3)
         self.assertEqual(index, 3)  # "is"
         
