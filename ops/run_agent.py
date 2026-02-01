@@ -13,7 +13,7 @@ WORKTREE = Path("/srv/claude-agent/worktree")
 RULES_FILE = WORKTREE / "ops" / "agent_rules.txt"
 LOCKDIR = Path("/tmp/claude_agent.lock")
 LOCKINFO = LOCKDIR / "lock.json"
-STALE_LOCK_SECS = 90 * 60
+STALE_LOCK_SECS = 4 * 60 * 60  # 4 hours - allow long-running sessions
 CLAUDE_CLI_ENV = "CLAUDE_CLI"
 REQUIRED_USER = "claudeagent"
 REQUIRED_VENV = "claude-base"
@@ -25,12 +25,12 @@ CLAUDE_CLI_FALLBACK_PATHS = [
     Path("/usr/local/bin/claude"),
     Path("/opt/claude/bin/claude"),
 ]
-RUN_DEADLINE_SECS = 55 * 60
-DEFAULT_SH_TIMEOUT_SECS = 10 * 60
-DEFAULT_CLAUDE_TIMEOUT_SECS = 20 * 60
+RUN_DEADLINE_SECS = 3 * 60 * 60  # 3 hours - generous time budget for complex tasks
+DEFAULT_SH_TIMEOUT_SECS = 30 * 60  # 30 minutes - allow slow builds/tests
+DEFAULT_CLAUDE_TIMEOUT_SECS = 90 * 60  # 90 minutes - allow extended reasoning
 
-PLANNER_MAX_TURNS = 5
-EXEC_MAX_TURNS = 18
+PLANNER_MAX_TURNS = 12  # More turns for thorough planning
+EXEC_MAX_TURNS = 50  # Significantly more turns for complex implementations
 
 # Keep tools tight. Use --tools to restrict availability,
 # and --allowedTools to auto-approve a safe subset. (Docs: CLI reference)
@@ -392,10 +392,10 @@ def main():
             "type": "object",
             "additionalProperties": False,
             "properties": {
-                "loop_todo": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 5},
-                "definition_of_done": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 5},
-                "commands_expected": {"type": "array", "items": {"type": "string"}, "maxItems": 12},
-                "risks": {"type": "array", "items": {"type": "string"}, "maxItems": 12},
+                "loop_todo": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 15},
+                "definition_of_done": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": 10},
+                "commands_expected": {"type": "array", "items": {"type": "string"}, "maxItems": 25},
+                "risks": {"type": "array", "items": {"type": "string"}, "maxItems": 15},
             },
             "required": ["loop_todo", "definition_of_done"],
         }
@@ -453,7 +453,7 @@ def main():
             "Implement this run-scoped TODO list:\n"
             f"{todo_lines}\n\n"
             "Rules:\n"
-            "- Do at most 2 commits.\n"
+            "- Commit often with descriptive messages (small, reviewable diffs preferred).\n"
             "- Run appropriate tests or checks if possible.\n"
             "- Update STATE.md and GOALS.md to reflect actual work completed.\n"
             "- Append a RUNLOG.md entry with timestamp, summary, tests, and commit hashes.\n"
