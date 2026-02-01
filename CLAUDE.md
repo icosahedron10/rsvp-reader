@@ -34,7 +34,7 @@ python test_integration.py
 
 This is an RSVP (Rapid Serial Visual Presentation) speed reading application with three main components:
 
-1. **file_parser.py** - `FileParser` class that extracts tokens from .txt and .pdf files. Uses PyPDF2 for PDF parsing. Tokens are whitespace-split words with punctuation preserved.
+1. **file_parser.py** - `FileParser` class that extracts tokens from .txt, .pdf, .epub, and .pub files. Uses PyPDF2 for PDF, standard library (zipfile, xml) for EPUB. Tokens are whitespace-split words with punctuation preserved. `parse_chapters()` method splits content by chapter headings.
 
 2. **token_displayer.py** - `RSVPTokenDisplayer` class that manages token navigation and playback state. Handles WPM-based timing, play/pause/seek controls, and search functionality. This is a stateful class that tracks current position and playback state.
 

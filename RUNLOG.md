@@ -13,4 +13,4 @@
   - Summary: Added .epub/.pub file support to FileParser using standard library (zipfile, xml.etree). Added parse_chapters() method with regex for Chapter/Part/Article/Section detection.
   - Tests run: `python -m unittest discover -s . -p "test_*.py" -v` - 41 tests, all passed
   - Files modified: file_parser.py, test_file_parser.py
-  - Commits: (pending)
+  - Commits: 2e356bb
