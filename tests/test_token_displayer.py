@@ -3,7 +3,7 @@ Tests for token_displayer.py (Part Two)
 """
 
 import unittest
-from token_displayer import RSVPTokenDisplayer
+from src.token_displayer import RSVPTokenDisplayer
 
 
 class TestRSVPTokenDisplayer(unittest.TestCase):
@@ -35,14 +35,33 @@ class TestRSVPTokenDisplayer(unittest.TestCase):
             self.displayer.set_speed(-100)
     
     def test_get_delay(self):
-        """Test delay calculation."""
+        """Test delay calculation with word-length cadence."""
         self.displayer.set_speed(300)
-        expected_delay = 60.0 / 300  # 0.2 seconds
+        base_delay = 60.0 / 300  # 0.2 seconds
+
+        # Current token is "Hello" (5 chars) -> multiplier = 0.7 + (5 * 0.05) = 0.95
+        expected_delay = base_delay * 0.95
         self.assertAlmostEqual(self.displayer.get_delay(), expected_delay)
-        
-        self.displayer.set_speed(600)
-        expected_delay = 60.0 / 600  # 0.1 seconds
+
+        # Move to "a" (1 char) -> multiplier = 0.7 + (1 * 0.05) = 0.75
+        self.displayer.seek(4)  # "a"
+        expected_delay = base_delay * 0.75
         self.assertAlmostEqual(self.displayer.get_delay(), expected_delay)
+
+        # Move to "world!" (6 chars) -> multiplier = 0.7 + (6 * 0.05) = 1.0
+        self.displayer.seek(1)  # "world!"
+        expected_delay = base_delay * 1.0
+        self.assertAlmostEqual(self.displayer.get_delay(), expected_delay)
+
+    def test_get_delay_long_words(self):
+        """Test delay calculation caps at 12 characters."""
+        long_tokens = ["supercalifragilisticexpialidocious"]  # 34 chars, but capped at 12
+        displayer = RSVPTokenDisplayer(long_tokens, wpm=300)
+        base_delay = 60.0 / 300
+
+        # Multiplier capped at 12 chars: 0.7 + (12 * 0.05) = 1.3
+        expected_delay = base_delay * 1.3
+        self.assertAlmostEqual(displayer.get_delay(), expected_delay)
     
     def test_get_current_token(self):
         """Test getting current token."""

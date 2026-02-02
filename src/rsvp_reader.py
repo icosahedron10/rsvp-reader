@@ -7,8 +7,8 @@ and file queue management.
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox, colorchooser
 from typing import Optional, List, Tuple, Dict, Any
-from file_parser import FileParser
-from token_displayer import RSVPTokenDisplayer
+from .file_parser import FileParser
+from .token_displayer import RSVPTokenDisplayer
 from tktooltip import ToolTip
 
 

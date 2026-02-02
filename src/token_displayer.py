@@ -48,12 +48,32 @@ class RSVPTokenDisplayer:
     
     def get_delay(self) -> float:
         """
-        Calculate the delay between words based on WPM.
-        
+        Calculate the delay for the current word based on WPM and word length.
+
+        Longer words receive slightly more display time, shorter words slightly less.
+        This creates a natural reading cadence that improves comprehension.
+
+        The scaling formula uses word length to compute a multiplier:
+        - 1-2 character words: ~0.8x base delay
+        - 5 character words: ~1.0x base delay (baseline)
+        - 10+ character words: ~1.3x base delay
+
         Returns:
-            Delay in seconds between each word
+            Delay in seconds for the current word
         """
-        return 60.0 / self.wpm
+        base_delay = 60.0 / self.wpm
+
+        token = self.get_current_token()
+        if not token:
+            return base_delay
+
+        # Scale delay based on word length
+        # Short words (1-2 chars) get ~0.8x, average words (5 chars) get 1.0x,
+        # long words (10+ chars) get up to ~1.3x
+        word_length = len(token)
+        multiplier = 0.7 + (min(word_length, 12) * 0.05)
+
+        return base_delay * multiplier
     
     def get_current_token(self) -> Optional[str]:
         """
