@@ -2,8 +2,12 @@
 Integration test demonstrating all three parts working together.
 """
 
-from file_parser import FileParser
-from token_displayer import RSVPTokenDisplayer
+import os
+from src.file_parser import FileParser
+from src.token_displayer import RSVPTokenDisplayer
+
+# Get path to example.txt relative to this test file
+TEST_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def test_integration():
     """Test all three parts working together."""
@@ -16,7 +20,7 @@ def test_integration():
     # Part One: File Parsing
     print("Part 1: File Parsing")
     print("-" * 40)
-    file_path = "example.txt"
+    file_path = os.path.join(TEST_DIR, "example.txt")
     parser = FileParser(file_path)
     tokens = parser.parse()
     print(f"✓ Successfully parsed '{file_path}'")
@@ -79,7 +83,7 @@ def test_integration():
     print("=" * 60)
     print()
     print("The RSVP Reader is ready to use!")
-    print("To start the GUI application, run: python rsvp_reader.py")
+    print("To start the GUI application, run: python -m src.rsvp_reader")
     print()
 
 if __name__ == "__main__":

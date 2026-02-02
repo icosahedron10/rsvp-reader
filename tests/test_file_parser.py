@@ -7,7 +7,7 @@ import tempfile
 import os
 import zipfile
 from pathlib import Path
-from file_parser import FileParser, parse_file
+from src.file_parser import FileParser, parse_file
 
 
 class TestFileParser(unittest.TestCase):

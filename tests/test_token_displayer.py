@@ -3,7 +3,7 @@ Tests for token_displayer.py (Part Two)
 """
 
 import unittest
-from token_displayer import RSVPTokenDisplayer
+from src.token_displayer import RSVPTokenDisplayer
 
 
 class TestRSVPTokenDisplayer(unittest.TestCase):
